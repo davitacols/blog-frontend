@@ -1,59 +1,100 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { Search, Home, Info, Mail, LogIn, UserPlus } from 'lucide-react';
+import React, { useState } from 'react';
+import { Search, Home, Info, Mail, LogIn, UserPlus, Menu, X } from 'lucide-react';
 import './Header.css';
 
 const Header = () => {
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+
     return (
-        <header className="navbar">
-            <div className="container">
-                <Link to="/" className="logo-link">
-                    DevConn
-                </Link>
-                
-                <div className="search-container">
-                    <form className="search-form">
-                        <input
-                            type="search"
-                            placeholder="Search..."
-                            className="search-input"
-                        />
-                        <button type="submit" className="search-button" aria-label="Search">
-                            <Search size={20} />
-                        </button>
-                    </form>
-                </div>
-                
-                <div className="nav-section">
-                    <nav className="nav-links">
-                        <Link to="/" className="nav-item">
-                            <Home size={18} />
-                            <span>Home</span>
-                        </Link>
-                        <Link to="/about" className="nav-item">
-                            <Info size={18} />
-                            <span>About</span>
-                        </Link>
-                        <Link to="/contact" className="nav-item">
-                            <Mail size={18} />
-                            <span>Contact</span>
-                        </Link>
-                    </nav>
-                    
-                    <div className="user-actions">
-                        <Link to="/login" className="btn login-button">
-                            <LogIn size={18} />
-                            <span>Log in</span>
-                        </Link>
-                        <Link to="/signup" className="btn signup-button">
-                            <UserPlus size={18} />
-                            <span>Sign up</span>
-                        </Link>
+        <header className="header">
+            <div className="header-container">
+                <div className="header-content">
+                    {/* Logo */}
+                    <a href="/" className="logo gradient-text">
+                        DevConn
+                    </a>
+
+                    {/* Search Bar */}
+                    <div className="search-container">
+                        <div className="search-wrapper">
+                            <input
+                                type="search"
+                                placeholder="Search developers, projects..."
+                                className="search-input focus-outline"
+                            />
+                            <button className="search-button">
+                                <Search size={20} />
+                            </button>
+                        </div>
                     </div>
+
+                    {/* Desktop Navigation */}
+                    <nav className="nav-menu">
+                        <NavLink href="/" icon={<Home size={18} />} text="Home" />
+                        <NavLink href="/about" icon={<Info size={18} />} text="About" />
+                        <NavLink href="/contact" icon={<Mail size={18} />} text="Contact" />
+                        
+                        <div className="action-buttons">
+                            <ActionButton href="/login" icon={<LogIn size={18} />} text="Log in" variant="login" />
+                            <ActionButton href="/signup" icon={<UserPlus size={18} />} text="Sign up" variant="signup" />
+                        </div>
+                    </nav>
+
+                    {/* Mobile menu button */}
+                    <button
+                        onClick={() => setIsMenuOpen(!isMenuOpen)}
+                        className="mobile-menu-button"
+                    >
+                        {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+                    </button>
+                </div>
+            </div>
+
+            {/* Mobile menu */}
+            <div className={`mobile-menu ${isMenuOpen ? 'open' : ''}`}>
+                <div className="mobile-nav-links">
+                    <MobileNavLink href="/" icon={<Home size={18} />} text="Home" />
+                    <MobileNavLink href="/about" icon={<Info size={18} />} text="About" />
+                    <MobileNavLink href="/contact" icon={<Mail size={18} />} text="Contact" />
+                </div>
+                <div className="mobile-action-buttons">
+                    <MobileActionButton href="/login" icon={<LogIn size={18} />} text="Log in" />
+                    <MobileActionButton href="/signup" icon={<UserPlus size={18} />} text="Sign up" />
                 </div>
             </div>
         </header>
     );
 };
+
+const NavLink = ({ href, icon, text }) => (
+    <a href={href} className="nav-link">
+        {icon}
+        <span>{text}</span>
+    </a>
+);
+
+const ActionButton = ({ href, icon, text, variant }) => (
+    <a
+        href={href}
+        className={`btn ${variant === 'signup' ? 'btn-signup' : 'btn-login'}`}
+    >
+        {icon}
+        <span>{text}</span>
+    </a>
+);
+
+const MobileNavLink = ({ href, icon, text }) => (
+    <a href={href} className="mobile-nav-link">
+        {icon}
+        <span>{text}</span>
+    </a>
+);
+
+const MobileActionButton = ({ href, icon, text }) => (
+    <a href={href} className="mobile-btn">
+        {icon}
+        <span>{text}</span>
+    </a>
+);
 
 export default Header;

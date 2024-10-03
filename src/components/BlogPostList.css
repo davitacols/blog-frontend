@@ -69,6 +69,18 @@
     color: #2b6cb0;
 }
 
+.blog-post-list__loading,
+.blog-post-list__error {
+    text-align: center;
+    font-size: 1.125rem;
+    margin-top: 2rem;
+    color: #e53e3e; /* Color for error messages */
+}
+
+.blog-post-list__loading {
+    color: #4299e1; /* Color for loading messages */
+}
+
 @media (max-width: 768px) {
     .blog-post-list__grid {
         grid-template-columns: 1fr;

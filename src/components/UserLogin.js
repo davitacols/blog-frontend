@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Mail, Lock, AlertCircle } from 'lucide-react';
-import './UserLogin.css'; // Make sure this file is linked correctly
+import './UserLogin.css';
 
 const UserLogin = () => {
     const [formData, setFormData] = useState({
@@ -45,10 +45,8 @@ const UserLogin = () => {
         if (Object.keys(newErrors).length === 0) {
             setIsLoading(true);
             try {
-                // Simulate an API call for user login
                 await new Promise((resolve) => setTimeout(resolve, 1000));
                 console.log('User logged in:', formData);
-                // Redirect or show success message after login
             } catch (error) {
                 setErrors({ submit: 'Login failed. Please try again.' });
             } finally {
@@ -62,11 +60,10 @@ const UserLogin = () => {
     return (
         <div className="login-container">
             <div className="login-box">
-                <h1 className="login-title">Log In</h1>
-                <p className="login-subtitle">Welcome back! Please log in to your account.</p>
+                <h1 className="login-title">Welcome Back</h1>
+                <p className="login-subtitle">Login to continue</p>
                 <form onSubmit={handleSubmit} className="login-form">
                     <div className="form-group">
-                        <label htmlFor="email" className="form-label">Email</label>
                         <div className="input-container">
                             <Mail className="input-icon" size={20} />
                             <input
@@ -74,7 +71,7 @@ const UserLogin = () => {
                                 id="email"
                                 name="email"
                                 className={`form-input ${errors.email ? 'error' : ''}`}
-                                placeholder="Enter your email"
+                                placeholder="Email Address"
                                 value={formData.email}
                                 onChange={handleChange}
                             />
@@ -88,7 +85,6 @@ const UserLogin = () => {
                     </div>
 
                     <div className="form-group">
-                        <label htmlFor="password" className="form-label">Password</label>
                         <div className="input-container">
                             <Lock className="input-icon" size={20} />
                             <input
@@ -96,7 +92,7 @@ const UserLogin = () => {
                                 id="password"
                                 name="password"
                                 className={`form-input ${errors.password ? 'error' : ''}`}
-                                placeholder="Enter your password"
+                                placeholder="Password"
                                 value={formData.password}
                                 onChange={handleChange}
                             />
@@ -110,11 +106,12 @@ const UserLogin = () => {
                     </div>
 
                     <div className="form-group-inline">
-                        <div className="checkbox-container">
-                            <input type="checkbox" id="remember" name="remember" />
-                            <label htmlFor="remember" className="checkbox-text">Remember me</label>
-                        </div>
-                        <Link to="/forgot-password" className="forgot-password">
+                        <label className="checkbox-container">
+                            <input type="checkbox" name="remember" />
+                            <span className="checkmark"></span>
+                            Remember me
+                        </label>
+                        <Link to="/forgot-password" className="forgot-password-link">
                             Forgot password?
                         </Link>
                     </div>
@@ -136,9 +133,9 @@ const UserLogin = () => {
                 </form>
 
                 <p className="signup-prompt">
-                    Don't have an account?{' '}
+                    New here?{' '}
                     <Link to="/signup" className="signup-link">
-                        Sign up
+                        Create an account
                     </Link>
                 </p>
             </div>
