@@ -159,3 +159,32 @@
 .signup-link:hover {
     text-decoration: underline;
 }
+
+
+/* Add these styles to your existing UserLogin.css file */
+
+.divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 20px 0;
+}
+
+.divider::before,
+.divider::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.divider span {
+    padding: 0 10px;
+    color: #666;
+    font-size: 14px;
+}
+
+/* Adjust the Google button styling if needed */
+.google-login-button {
+    width: 100%;
+    margin-bottom: 20px;
+}

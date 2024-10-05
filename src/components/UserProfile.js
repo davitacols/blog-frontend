@@ -30,7 +30,7 @@ const UserProfile = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.put('/api/profile/', updatedProfile);
+            const response = await axios.put('/api/users/profile/', updatedProfile);
             setProfile(response.data);
             setIsEditing(false);
             setError('');

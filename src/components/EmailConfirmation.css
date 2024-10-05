@@ -1,0 +1,49 @@
+/* EmailConfirmation.css */
+
+/* Center the confirmation message */
+.email-confirmation-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Full screen height */
+    background-color: #f9f9f9;
+  }
+  
+  /* Box containing the confirmation message */
+  .email-confirmation-box {
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    padding: 2rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    text-align: center;
+    max-width: 400px;
+    width: 100%;
+  }
+  
+  /* Title styling */
+  .email-confirmation-box h2 {
+    color: #333;
+    font-size: 24px;
+    margin-bottom: 1rem;
+  }
+  
+  /* Message text */
+  .email-confirmation-box p {
+    color: #555;
+    font-size: 16px;
+    margin-bottom: 1rem;
+  }
+  
+  /* Success message */
+  .email-confirmation-success {
+    color: #4caf50; /* Green for success */
+    font-weight: bold;
+  }
+  
+  /* Error message */
+  .email-confirmation-error {
+    color: #f44336; /* Red for error */
+    font-weight: bold;
+  }
+  
