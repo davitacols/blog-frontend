@@ -1,0 +1,145 @@
+/* Global reset and typography settings */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Root container settings */
+.min-h-screen {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #f5f7fa, #ffffff);
+}
+
+/* Indigo color for background and hover transition */
+.bg-indigo-600 {
+  background-color: #4f46e5;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.bg-indigo-600:hover {
+  background-color: #4338ca;
+}
+
+/* Text color */
+.text-indigo-600 {
+  color: #4f46e5;
+}
+
+/* Typography settings */
+.text-gray-900 {
+  color: #1f2937;
+}
+
+.text-gray-500 {
+  color: #6b7280;
+}
+
+/* Font weight */
+.font-extrabold {
+  font-weight: 800;
+}
+
+/* Pulse animation for icon */
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Button styles */
+a.inline-flex {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.25rem;
+  border-radius: 0.375rem;
+  background-color: #4f46e5;
+  color: #ffffff;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background-color 0.3s ease-in-out;
+}
+
+a.inline-flex:hover {
+  background-color: #4338ca;
+}
+
+/* Responsive typography */
+.text-4xl {
+  font-size: 2.25rem;
+  line-height: 2.5rem;
+}
+
+@media (min-width: 640px) {
+  .text-5xl {
+    font-size: 3rem;
+    line-height: 1;
+    }
+}
+
+/* More specific responsive typography */
+.text-lg {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+}
+
+/* Responsive padding */
+.px-4 {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+@media (min-width: 640px) {
+  .px-4 {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .px-4 {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+/* Max width setting for content */
+.max-w-md {
+  max-width: 28rem;
+  width: 100%;
+}
+
+/* Margin and spacing */
+.mt-6 {
+  margin-top: 1.5rem;
+}
+
+.mt-10 {
+  margin-top: 2.5rem;
+}
+
+.space-y-8 > *:not(:last-child) {
+  margin-bottom: 2rem;
+}
+
+.w-full {
+  width: 100%;
+}

@@ -34,8 +34,16 @@ export default function UserRegistration() {
     const validateForm = () => {
         const newErrors = {};
         if (!formData.username) newErrors.username = 'Username is required';
-        if (!formData.email) newErrors.email = 'Email is required';
-        if (!formData.password) newErrors.password = 'Password is required';
+        if (!formData.email) {
+            newErrors.email = 'Email is required';
+        } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+            newErrors.email = 'Email is invalid';
+        }
+        if (!formData.password) {
+            newErrors.password = 'Password is required';
+        } else if (formData.password.length < 8) {
+            newErrors.password = 'Password must be at least 8 characters long';
+        }
         if (formData.password !== formData.confirmPassword) {
             newErrors.confirmPassword = 'Passwords do not match';
         }
@@ -46,13 +54,13 @@ export default function UserRegistration() {
         e.preventDefault();
         setErrors({});
         setSuccessMessage('');
-        
+    
         const validationErrors = validateForm();
         if (Object.keys(validationErrors).length > 0) {
             setErrors(validationErrors);
             return;
         }
-
+    
         setIsLoading(true);
         try {
             await registerUser({
@@ -61,7 +69,7 @@ export default function UserRegistration() {
                 password1: formData.password,
                 password2: formData.confirmPassword,
             });
-
+    
             setSuccessMessage('Registration successful! Please verify your email.');
             setFormData({
                 username: '',
@@ -71,14 +79,21 @@ export default function UserRegistration() {
             });
         } catch (error) {
             console.error('Registration error:', error);
-            const serverErrors = error.response?.data || {};
-            setErrors({
-                ...Object.keys(serverErrors).reduce((acc, key) => {
-                    acc[key] = serverErrors[key].join(' ');
-                    return acc;
-                }, {}),
-                submit: 'Registration failed. Please check your information.'
-            });
+            if (typeof error === 'object' && error !== null) {
+                setErrors(prevErrors => ({
+                    ...prevErrors,
+                    ...Object.entries(error).reduce((acc, [key, value]) => {
+                        acc[key] = Array.isArray(value) ? value.join(' ') : value;
+                        return acc;
+                    }, {}),
+                    submit: 'Registration failed. Please check your information.'
+                }));
+            } else {
+                setErrors(prevErrors => ({
+                    ...prevErrors,
+                    submit: error.toString()
+                }));
+            }
         } finally {
             setIsLoading(false);
         }
@@ -90,7 +105,8 @@ export default function UserRegistration() {
                 <h1 className="registration-title">Create an Account</h1>
                 <p className="registration-subtitle">Start your journey with us</p>
 
-                <form onSubmit={handleSubmit} className="registration-form">
+                <form onSubmit={handleSubmit} className="registration-form" aria-live="polite">
+                    {/* Username Field */}
                     <div className="form-group">
                         <div className="input-container">
                             <User className="input-icon" size={20} />
@@ -102,16 +118,19 @@ export default function UserRegistration() {
                                 value={formData.username}
                                 onChange={handleChange}
                                 placeholder="Username"
+                                required
+                                aria-invalid={!!errors.username}
                             />
                         </div>
                         {errors.username && (
-                            <span className="error-message">
+                            <span className="error-message" role="alert">
                                 <AlertCircle size={16} />
                                 {errors.username}
                             </span>
                         )}
                     </div>
-                    
+
+                    {/* Email Field */}
                     <div className="form-group">
                         <div className="input-container">
                             <Mail className="input-icon" size={20} />
@@ -123,16 +142,19 @@ export default function UserRegistration() {
                                 value={formData.email}
                                 onChange={handleChange}
                                 placeholder="Email"
+                                required
+                                aria-invalid={!!errors.email}
                             />
                         </div>
                         {errors.email && (
-                            <span className="error-message">
+                            <span className="error-message" role="alert">
                                 <AlertCircle size={16} />
                                 {errors.email}
                             </span>
                         )}
                     </div>
-                    
+
+                    {/* Password Field */}
                     <div className="form-group">
                         <div className="input-container">
                             <Lock className="input-icon" size={20} />
@@ -144,17 +166,20 @@ export default function UserRegistration() {
                                 value={formData.password}
                                 onChange={handleChange}
                                 placeholder="Password"
+                                required
+                                aria-invalid={!!errors.password}
                             />
                         </div>
                         {errors.password && (
-                            <span className="error-message">
+                            <span className="error-message" role="alert">
                                 <AlertCircle size={16} />
                                 {errors.password}
                             </span>
                         )}
                         <p className="password-hint">Must be at least 8 characters long</p>
                     </div>
-                    
+
+                    {/* Confirm Password Field */}
                     <div className="form-group">
                         <div className="input-container">
                             <Lock className="input-icon" size={20} />
@@ -166,10 +191,12 @@ export default function UserRegistration() {
                                 value={formData.confirmPassword}
                                 onChange={handleChange}
                                 placeholder="Confirm Password"
+                                required
+                                aria-invalid={!!errors.confirmPassword}
                             />
                         </div>
                         {errors.confirmPassword && (
-                            <span className="error-message">
+                            <span className="error-message" role="alert">
                                 <AlertCircle size={16} />
                                 {errors.confirmPassword}
                             </span>
@@ -187,14 +214,14 @@ export default function UserRegistration() {
                     </button>
 
                     {errors.submit && (
-                        <div className="submit-error">
+                        <div className="submit-error" role="alert">
                             <AlertCircle size={16} />
                             {errors.submit}
                         </div>
                     )}
-                    
+
                     {successMessage && (
-                        <div className="success-message">
+                        <div className="success-message" role="alert">
                             {successMessage}
                         </div>
                     )}

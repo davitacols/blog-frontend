@@ -1,100 +1,81 @@
-import React, { useState } from 'react';
-import { Search, Home, Info, Mail, LogIn, UserPlus, Menu, X } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Search, Bell, MessageSquare, User, Menu, X } from 'lucide-react';
 import './Header.css';
 
 const Header = () => {
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
 
-    return (
-        <header className="header">
-            <div className="header-container">
-                <div className="header-content">
-                    {/* Logo */}
-                    <a href="/" className="logo gradient-text">
-                        DevConn
-                    </a>
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      setIsLoggedIn(true);
+    }
+  }, []);
 
-                    {/* Search Bar */}
-                    <div className="search-container">
-                        <div className="search-wrapper">
-                            <input
-                                type="search"
-                                placeholder="Search developers, projects..."
-                                className="search-input focus-outline"
-                            />
-                            <button className="search-button">
-                                <Search size={20} />
-                            </button>
-                        </div>
-                    </div>
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    setIsLoggedIn(false);
+    window.location.href = '/';
+  };
 
-                    {/* Desktop Navigation */}
-                    <nav className="nav-menu">
-                        <NavLink href="/" icon={<Home size={18} />} text="Home" />
-                        <NavLink href="/about" icon={<Info size={18} />} text="About" />
-                        <NavLink href="/contact" icon={<Mail size={18} />} text="Contact" />
-                        
-                        <div className="action-buttons">
-                            <ActionButton href="/login" icon={<LogIn size={18} />} text="Log in" variant="login" />
-                            <ActionButton href="/signup" icon={<UserPlus size={18} />} text="Sign up" variant="signup" />
-                        </div>
-                    </nav>
+  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+  const toggleProfileMenu = () => setIsProfileMenuOpen(!isProfileMenuOpen);
 
-                    {/* Mobile menu button */}
-                    <button
-                        onClick={() => setIsMenuOpen(!isMenuOpen)}
-                        className="mobile-menu-button"
-                    >
-                        {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-                    </button>
+  return (
+    <header className="header">
+      <div className="header-container">
+        <div className="logo-container">
+          <a href="/" className="logo">DevConn</a>
+          <button className="menu-toggle" onClick={toggleMenu}>
+            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
+
+        <nav className={`nav-menu ${isMenuOpen ? 'active' : ''}`}>
+          <a href="/feed" className="nav-link">Feed</a>
+          <a href="/network" className="nav-link">Network</a>
+          <a href="/jobs" className="nav-link">Jobs</a>
+          <a href="/learn" className="nav-link">Learn</a>
+        </nav>
+
+        <div className="search-container">
+          <Search size={20} className="search-icon" />
+          <input type="text" placeholder="Search DevConnect" className="search-input" />
+        </div>
+
+        {isLoggedIn ? (
+          <div className="user-controls">
+            <button className="icon-button">
+              <Bell size={24} />
+            </button>
+            <button className="icon-button">
+              <MessageSquare size={24} />
+            </button>
+            <div className="profile-menu-container">
+              <button className="profile-button" onClick={toggleProfileMenu}>
+                <User size={24} />
+              </button>
+              {isProfileMenuOpen && (
+                <div className="profile-menu">
+                  <a href="/profile" className="profile-menu-item">Your Profile</a>
+                  <a href="/dashboard" className="profile-menu-item">Dashboard</a>
+                  <a href="/settings" className="profile-menu-item">Settings</a>
+                  <button onClick={handleLogout} className="profile-menu-item">Log Out</button>
                 </div>
+              )}
             </div>
-
-            {/* Mobile menu */}
-            <div className={`mobile-menu ${isMenuOpen ? 'open' : ''}`}>
-                <div className="mobile-nav-links">
-                    <MobileNavLink href="/" icon={<Home size={18} />} text="Home" />
-                    <MobileNavLink href="/about" icon={<Info size={18} />} text="About" />
-                    <MobileNavLink href="/contact" icon={<Mail size={18} />} text="Contact" />
-                </div>
-                <div className="mobile-action-buttons">
-                    <MobileActionButton href="/login" icon={<LogIn size={18} />} text="Log in" />
-                    <MobileActionButton href="/signup" icon={<UserPlus size={18} />} text="Sign up" />
-                </div>
-            </div>
-        </header>
-    );
+          </div>
+        ) : (
+          <div className="auth-buttons">
+            <a href="/login" className="login-button">Log In</a>
+            <a href="/signup" className="signup-button">Sign Up</a>
+          </div>
+        )}
+      </div>
+    </header>
+  );
 };
-
-const NavLink = ({ href, icon, text }) => (
-    <a href={href} className="nav-link">
-        {icon}
-        <span>{text}</span>
-    </a>
-);
-
-const ActionButton = ({ href, icon, text, variant }) => (
-    <a
-        href={href}
-        className={`btn ${variant === 'signup' ? 'btn-signup' : 'btn-login'}`}
-    >
-        {icon}
-        <span>{text}</span>
-    </a>
-);
-
-const MobileNavLink = ({ href, icon, text }) => (
-    <a href={href} className="mobile-nav-link">
-        {icon}
-        <span>{text}</span>
-    </a>
-);
-
-const MobileActionButton = ({ href, icon, text }) => (
-    <a href={href} className="mobile-btn">
-        {icon}
-        <span>{text}</span>
-    </a>
-);
 
 export default Header;

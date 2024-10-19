@@ -1,0 +1,19 @@
+.linkedin-login-button {
+  display: flex;
+  align-items: center;
+  background-color: #0077b5;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.linkedin-login-button:hover {
+  background-color: #005582;
+}
+
+.linkedin-icon {
+  margin-right: 10px;
+}

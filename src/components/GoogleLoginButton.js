@@ -1,47 +1,70 @@
 // src/components/GoogleLoginButton.js
-
-import React from 'react';
+import React, { useState } from 'react';
 import { GoogleLogin } from '@react-oauth/google';
-import './GoogleLoginButton.css'; // Import the CSS file
+import { useNavigate } from 'react-router-dom';
+import './GoogleLoginButton.css';
 
 const GoogleLoginButton = () => {
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
+    const navigate = useNavigate();
+
     const responseGoogle = async (credentialResponse) => {
-        const { credential } = credentialResponse; // Get the token from Google response
+        const { credential } = credentialResponse;
+
+        setLoading(true);
+        setError('');
 
         try {
-            const res = await fetch('http://127.0.0.1:8000/api/auth/google/', { // Update the URL to your backend
+            const res = await fetch('http://127.0.0.1:8000/api/users/google-login/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ tokenId: credential }), // Send the credential token to your backend
+                body: JSON.stringify({ token: credential }),
             });
 
             if (res.ok) {
                 const data = await res.json();
-                // Handle success (e.g., redirect or update state)
                 console.log('Login successful:', data);
-                // Example: Store token and user data in local storage
-                localStorage.setItem('token', data.key); // Adjust according to your response structure
-                localStorage.setItem('user', JSON.stringify(data.user)); // Adjust according to your response structure
-                // Redirect to homepage or update the state
+
+                // Ensure the response contains the expected data
+                if (data.authToken && data.username) {
+                    // Store the token and user info locally
+                    localStorage.setItem('token', data.authToken); // Store as 'token' instead of 'access'
+                    localStorage.setItem('username', data.username);
+                    localStorage.setItem('user', JSON.stringify(data));
+
+                    // Use the navigate function to redirect
+                    navigate('/');
+                } else {
+                    throw new Error('Invalid response from server');
+                }
             } else {
-                // Handle error
-                console.error('Login failed:', res.statusText);
+                const errorData = await res.json();
+                console.error('Login failed:', errorData);
+                setError(errorData.detail || 'Login failed. Please try again.');
             }
         } catch (error) {
-            console.error('Error:', error);
+            console.error('Error during Google login:', error);
+            setError('An error occurred while logging in. Please try again.');
+        } finally {
+            setLoading(false);
         }
     };
 
     return (
-        <GoogleLogin
-            onSuccess={responseGoogle}
-            onError={(error) => console.error('Login failed:', error)}
-            clientId="793694365694-0fcvgv3dcdi40f3cbpkjpk4addju4i83.apps.googleusercontent.com" // Replace with your Google Client ID
-            cookiePolicy={'single_host_origin'}
-            className="google-login-button" // Apply the CSS class
-        />
+        <div className="google-login-button-wrapper">
+            {error && <p className="error-message">{error}</p>}
+            <GoogleLogin
+                onSuccess={responseGoogle}
+                onError={(error) => {
+                    console.error('Login failed:', error);
+                    setError('An error occurred while logging in. Please try again.');
+                }}
+                className="google-login-button"
+            />
+        </div>
     );
 };
 

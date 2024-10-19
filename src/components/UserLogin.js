@@ -1,188 +1,173 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Lock, AlertCircle } from 'lucide-react';
-import axios from 'axios';
-import './UserLogin.css';
-import GoogleLoginButton from './GoogleLoginButton';
+import axiosInstance from '../axiosInstance'; // Custom axios instance for API calls
+import { FaGoogle, FaLinkedin } from 'react-icons/fa'; // Social icons
+import './UserLogin.css'; // Importing styles for UserLogin
+import GoogleLoginButton from './GoogleLoginButton'; // Google Login button component
+import LinkedInLoginButton from './LinkedInLoginButton'; // LinkedIn Login button component
 
 const UserLogin = () => {
-    const [formData, setFormData] = useState({
-        username: '',
-        password: '',
-    });
-    const [errors, setErrors] = useState({});
-    const [isLoading, setIsLoading] = useState(false);
-    const [rememberMe, setRememberMe] = useState(false);
-    const navigate = useNavigate();
+  const [formData, setFormData] = useState({ username: '', password: '' });
+  const [errors, setErrors] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false); // Remember me state
+  const navigate = useNavigate();
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData((prevState) => ({
-            ...prevState,
-            [name]: value,
-        }));
+  // Load saved username if "Remember me" was previously checked
+  useEffect(() => {
+    const savedUsername = localStorage.getItem('username');
+    if (savedUsername) {
+      setFormData((prev) => ({ ...prev, username: savedUsername }));
+      setRememberMe(true);
+    }
 
-        if (errors[name]) {
-            setErrors((prevErrors) => ({
-                ...prevErrors,
-                [name]: '',
-            }));
-        }
-    };
+    // Redirect to homepage if user is already logged in
+    const token = localStorage.getItem('token');
+    if (token) {
+      navigate('/');
+    }
+  }, [navigate]);
 
-    const handleCheckboxChange = () => {
-        setRememberMe(!rememberMe);
-    };
+  // Function to handle user login
+  const handleUserLogin = async () => {
+    setErrors({}); // Clear previous errors
+    setIsLoading(true); // Set loading state
 
-    const validateForm = () => {
-        const newErrors = {};
-        if (!formData.username) {
-            newErrors.username = 'Username is required';
-        }
-        if (!formData.password) {
-            newErrors.password = 'Password is required';
-        }
-        return newErrors;
-    };
+    try {
+      const response = await axiosInstance.post('/api/users/login/', formData);
+      const token = response.data.tokens?.access || response.data.authToken; // Extract token from response
 
-    const handleUserLogin = async () => {
-        const newErrors = validateForm();
-        if (Object.keys(newErrors).length === 0) {
-            setIsLoading(true);
-            try {
-                const response = await axios.post('http://127.0.0.1:8000/api/auth/login/', formData);
-                localStorage.setItem('token', response.data.key);
-                localStorage.setItem('user', JSON.stringify(response.data.user));
+      if (!token) {
+        throw new Error('No token received from server');
+      }
 
-                if (rememberMe) {
-                    localStorage.setItem('username', formData.username);
-                } else {
-                    localStorage.removeItem('username');
-                }
+      // Save token and username in local storage
+      localStorage.setItem('token', token);
+      if (rememberMe) {
+        localStorage.setItem('username', formData.username);
+      } else {
+        localStorage.removeItem('username');
+      }
 
-                navigate('/');
-            } catch (error) {
-                console.error('Login error:', error.response ? error.response.data : error);
-                setErrors({ submit: 'Login failed. Please check your credentials.' });
-            } finally {
-                setIsLoading(false);
-            }
-        } else {
-            setErrors(newErrors);
-        }
-    };
+      // Redirect to home page after successful login
+      navigate('/');
+    } catch (error) {
+      handleError(error);
+    } finally {
+      setIsLoading(false); // Reset loading state
+    }
+  };
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        handleUserLogin();
-    };
+  // Handle input changes
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    setErrors((prev) => ({ ...prev, [name]: '' })); // Clear field-specific errors
+  };
 
-    return (
-        <div className="login-container">
-            <div className="login-box">
-                <h1 className="login-title">Welcome Back</h1>
-                <p className="login-subtitle">Login to continue</p>
-                
-                {/* Email/Password login form */}
-                <form onSubmit={handleSubmit} className="login-form">
-                    <div className="form-group">
-                        <div className="input-container">
-                            <Lock className="input-icon" size={20} />
-                            <input
-                                type="text"
-                                id="username"
-                                name="username"
-                                className={`form-input ${errors.username ? 'error' : ''}`}
-                                placeholder="Username"
-                                value={formData.username}
-                                onChange={handleChange}
-                                defaultValue={localStorage.getItem('username') || ''}
-                            />
-                        </div>
-                        {errors.username && (
-                            <span className="error-message">
-                                <AlertCircle size={16} />
-                                {errors.username}
-                            </span>
-                        )}
-                    </div>
+  // Handle form submission
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (validateForm()) {
+      handleUserLogin(); // Validate form before logging in
+    }
+  };
 
-                    <div className="form-group">
-                        <div className="input-container">
-                            <Lock className="input-icon" size={20} />
-                            <input
-                                type="password"
-                                id="password"
-                                name="password"
-                                className={`form-input ${errors.password ? 'error' : ''}`}
-                                placeholder="Password"
-                                value={formData.password}
-                                onChange={handleChange}
-                            />
-                        </div>
-                        {errors.password && (
-                            <span className="error-message">
-                                <AlertCircle size={16} />
-                                {errors.password}
-                            </span>
-                        )}
-                    </div>
+  // Validate form data
+  const validateForm = () => {
+    const newErrors = {};
+    if (!formData.username) newErrors.username = 'Username is required.';
+    if (!formData.password) newErrors.password = 'Password is required.';
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0; // Return true if no errors
+  };
 
-                    <div className="form-group-inline">
-                        <label className="checkbox-container">
-                            <input
-                                type="checkbox"
-                                name="remember"
-                                checked={rememberMe}
-                                onChange={handleCheckboxChange}
-                            />
-                            <span className="checkmark"></span>
-                            Remember me
-                        </label>
-                        <Link to="/forgot-password" className="forgot-password-link">
-                            Forgot password?
-                        </Link>
-                    </div>
+  // Handle error scenarios
+  const handleError = (error) => {
+    let errorMessage = 'An error occurred during login.';
 
-                    <button
-                        type="submit"
-                        className="login-button"
-                        disabled={isLoading}
-                    >
-                        {isLoading ? (
-                            <>
-                                <span className="spinner"></span> Logging in...
-                            </>
-                        ) : (
-                            'Log In'
-                        )}
-                    </button>
+    if (error.code === 'ECONNABORTED') {
+      errorMessage = 'The server is taking too long to respond. Please try again later.';
+    } else if (error.response) {
+      errorMessage = error.response.data.detail || 'Login failed. Please check your credentials.';
+    } else if (error.request) {
+      errorMessage = 'Could not connect to the server. Please check your internet connection.';
+    }
 
-                    {errors.submit && (
-                        <div className="submit-error">
-                            <AlertCircle size={16} />
-                            {errors.submit}
-                        </div>
-                    )}
-                </form>
+    setErrors({ submit: errorMessage });
+  };
 
-                {/* Divider */}
-                <div className="divider">
-                    <span>OR</span>
-                </div>
+  // Handle social login (e.g., Google, LinkedIn)
+  const handleSocialLogin = (provider) => {
+    console.log(`Logging in with ${provider}...`);
+    // Implement social login logic here
+  };
 
-                {/* Google login button */}
-                <GoogleLoginButton />
-
-                <p className="signup-prompt">
-                    New here?{' '}
-                    <Link to="/signup" className="signup-link">
-                        Create an account
-                    </Link>
-                </p>
-            </div>
+  return (
+    <div className="login-container">
+      <div className="login-box">
+        <h1 className="login-title">Welcome Back!</h1>
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label htmlFor="username" className="sr-only">Email or Username</label>
+            <input
+              type="text"
+              id="username"
+              name="username"
+              placeholder="Email or Username"
+              value={formData.username}
+              onChange={handleChange}
+              disabled={isLoading}
+              className={`login-input ${errors.username ? 'error' : ''}`}
+              aria-describedby="usernameError"
+            />
+            {errors.username && <span className="error-message" id="usernameError">{errors.username}</span>}
+          </div>
+          <div className="form-group">
+            <label htmlFor="password" className="sr-only">Password</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              placeholder="Password"
+              value={formData.password}
+              onChange={handleChange}
+              disabled={isLoading}
+              className={`login-input ${errors.password ? 'error' : ''}`}
+              aria-describedby="passwordError"
+            />
+            {errors.password && <span className="error-message" id="passwordError">{errors.password}</span>}
+          </div>
+          <div className="form-group-inline">
+            <label className="remember-me-label">
+              <input
+                type="checkbox"
+                checked={rememberMe}
+                onChange={() => setRememberMe(!rememberMe)} // Toggle rememberMe state
+                disabled={isLoading}
+              />
+              Remember me
+            </label>
+            <Link to="/forgot-password" className="forgot-password-link">
+              Forgot password?
+            </Link>
+          </div>
+          <button type="submit" disabled={isLoading} className="login-button">
+            {isLoading ? 'Logging in...' : 'Log In'}
+          </button>
+          {errors.submit && <div className="submit-error">{errors.submit}</div>}
+        </form>
+        <div className="divider">OR</div>
+        <div className="social-login">
+          <GoogleLoginButton onClick={() => handleSocialLogin('google')} />
+          <LinkedInLoginButton onClick={() => handleSocialLogin('linkedin')} />
         </div>
-    );
+        <p className="signup-prompt">
+          New here? <Link to="/signup" className="signup-link">Create an account</Link>
+        </p>
+      </div>
+    </div>
+  );
 };
 
 export default UserLogin;

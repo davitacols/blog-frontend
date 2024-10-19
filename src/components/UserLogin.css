@@ -1,190 +1,120 @@
-/* General container styling */
+/* UserLogin.css */
+
+/* Global Styles */
+body {
+  margin: 0;
+  font-family: 'Arial', sans-serif;
+  background-color: #f4f4f4; /* Light gray background */
+}
+
+/* Container for the login page */
 .login-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background-color: #f0f2f5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Full viewport height */
 }
 
 .login-box {
-    background-color: white;
-    padding: 40px;
-    border-radius: 10px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    max-width: 400px;
-    width: 100%;
+  background-color: #ffffff; /* White background for the login box */
+  border-radius: 8px; /* Rounded corners */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  padding: 20px;
+  width: 100%;
+  max-width: 400px; /* Max width for the box */
 }
 
+/* Title styles */
 .login-title {
-    font-size: 28px;
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 10px;
-    text-align: center;
+  text-align: center;
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #333; /* Dark gray text color */
 }
 
-.login-subtitle {
-    font-size: 16px;
-    color: #777;
-    text-align: center;
-    margin-bottom: 30px;
-}
-
-.login-form {
-    display: flex;
-    flex-direction: column;
-}
-
+/* Form group styles */
 .form-group {
-    margin-bottom: 20px;
+  margin-bottom: 15px; /* Space between form elements */
 }
 
-.input-container {
-    position: relative;
-    display: flex;
-    align-items: center;
+.login-input {
+  width: 100%; /* Full width for inputs */
+  padding: 10px;
+  border: 1px solid #ccc; /* Light gray border */
+  border-radius: 4px; /* Rounded corners for inputs */
+  transition: border-color 0.3s ease; /* Smooth border color transition */
 }
 
-.input-icon {
-    position: absolute;
-    left: 12px;
-    color: #777;
+.login-input:focus {
+  outline: none; /* Remove default outline */
+  border-color: #007bff; /* Change border color on focus */
 }
 
-.form-input {
-    width: 100%;
-    padding: 12px 12px 12px 40px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    font-size: 16px;
-    transition: border 0.3s ease;
-}
-
-.form-input:focus {
-    border-color: #007bff;
-    outline: none;
-}
-
-.form-input.error {
-    border-color: #e74c3c;
-}
-
+/* Error message styles */
 .error-message {
-    color: #e74c3c;
-    font-size: 14px;
-    margin-top: 5px;
-    display: flex;
-    align-items: center;
+  color: red; /* Red text for error messages */
+  font-size: 12px; /* Smaller font size */
 }
 
-.error-message svg {
-    margin-right: 5px;
-}
-
+/* Inline styles for remember me and forgot password link */
 .form-group-inline {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.checkbox-container {
-    display: flex;
-    align-items: center;
-    font-size: 14px;
-    color: #777;
-    position: relative;
+/* Remember me label */
+.remember-me-label {
+  display: flex;
+  align-items: center;
 }
 
-.checkbox-container input[type="checkbox"] {
-    margin-right: 8px;
-    transform: scale(1.2);
-}
-
-.forgot-password-link {
-    font-size: 14px;
-    color: #007bff;
-    text-decoration: none;
-}
-
-.forgot-password-link:hover {
-    text-decoration: underline;
-}
-
+/* Login button styles */
 .login-button {
-    background-color: #007bff;
-    color: white;
-    padding: 12px;
-    font-size: 16px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    width: 100%;
+  width: 100%; /* Full width button */
+  padding: 10px;
+  background-color: #007bff; /* Blue background */
+  color: white; /* White text */
+  border: none; /* Remove border */
+  border-radius: 4px; /* Rounded corners */
+  cursor: pointer; /* Pointer cursor */
+  font-size: 16px; /* Larger font size */
+  transition: background-color 0.3s ease; /* Smooth background color transition */
+}
+
+.login-button:hover {
+  background-color: #0056b3; /* Darker blue on hover */
 }
 
 .login-button:disabled {
-    background-color: #ddd;
+  background-color: #ccc; /* Gray background when disabled */
+  cursor: not-allowed; /* Not allowed cursor */
 }
 
-.login-button:hover:not(:disabled) {
-    background-color: #0056b3;
+/* Divider styles */
+.divider {
+  text-align: center;
+  margin: 15px 0; /* Space above and below the divider */
+  color: #aaa; /* Light gray text color */
 }
 
-.submit-error {
-    color: #e74c3c;
-    font-size: 14px;
-    margin-top: 15px;
-    display: flex;
-    align-items: center;
+/* Social login button styles */
+.social-login {
+  display: flex;
+  justify-content: space-between; /* Space between social buttons */
 }
 
-.submit-error svg {
-    margin-right: 5px;
-}
-
+/* Sign-up prompt styles */
 .signup-prompt {
-    text-align: center;
-    margin-top: 20px;
-    font-size: 14px;
-    color: #777;
+  text-align: center;
+  margin-top: 15px;
 }
 
 .signup-link {
-    color: #007bff;
-    text-decoration: none;
+  color: #007bff; /* Blue link color */
+  text-decoration: none; /* Remove underline */
 }
 
 .signup-link:hover {
-    text-decoration: underline;
-}
-
-
-/* Add these styles to your existing UserLogin.css file */
-
-.divider {
-    display: flex;
-    align-items: center;
-    text-align: center;
-    margin: 20px 0;
-}
-
-.divider::before,
-.divider::after {
-    content: '';
-    flex: 1;
-    border-bottom: 1px solid #e0e0e0;
-}
-
-.divider span {
-    padding: 0 10px;
-    color: #666;
-    font-size: 14px;
-}
-
-/* Adjust the Google button styling if needed */
-.google-login-button {
-    width: 100%;
-    margin-bottom: 20px;
+  text-decoration: underline; /* Underline on hover */
 }
